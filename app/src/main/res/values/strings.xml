@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">GameArena</string>
+    <string name="home">Home</string>
+    <string name="bookings">Bookings</string>
+    <string name="book_now">Book Now</string>
+    <string name="cancel_booking">Cancel Booking</string>
+    <string name="no_facilities">No facilities available</string>
+    <string name="no_bookings">No bookings yet</string>
+    <string name="available_time_slots">Available Time Slots</string>
+</resources>
