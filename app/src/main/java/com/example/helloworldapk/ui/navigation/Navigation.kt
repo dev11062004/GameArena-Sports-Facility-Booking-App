@@ -2,6 +2,7 @@ package com.example.helloworldapk.ui.navigation
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
+    object Login : Screen("login")
     object FacilityDetail : Screen("facility/{facilityId}") {
         fun createRoute(facilityId: Long) = "facility/$facilityId"
     }

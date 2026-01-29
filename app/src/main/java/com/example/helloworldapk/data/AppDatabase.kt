@@ -31,6 +31,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "gamearena_database"
                 )
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries() // For development - remove in production
                     .addCallback(DatabaseCallback())
                     .build()
                 INSTANCE = instance

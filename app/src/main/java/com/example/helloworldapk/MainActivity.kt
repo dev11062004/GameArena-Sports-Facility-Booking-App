@@ -4,14 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,6 +28,7 @@ import com.example.helloworldapk.ui.navigation.Screen
 import com.example.helloworldapk.ui.screens.BookingHistoryScreen
 import com.example.helloworldapk.ui.screens.FacilityDetailScreen
 import com.example.helloworldapk.ui.screens.HomeScreen
+import com.example.helloworldapk.ui.screens.LoginScreen
 import com.example.helloworldapk.ui.theme.GameArenaTheme
 import com.example.helloworldapk.ui.viewmodel.*
 import com.example.helloworldapk.utils.UserPreferences
@@ -36,17 +38,50 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Initialize database and repositories
-        val database = AppDatabase.getDatabase(applicationContext)
-        val facilityRepository = FacilityRepository(database.facilityDao())
-        val bookingRepository = BookingRepository(database.bookingDao())
+        try {
+            // Initialize database and repositories
+            val database = AppDatabase.getDatabase(applicationContext)
+            val facilityRepository = FacilityRepository(database.facilityDao())
+            val bookingRepository = BookingRepository(database.bookingDao())
 
-        setContent {
-            GameArenaTheme {
-                GameArenaApp(
-                    facilityRepository = facilityRepository,
-                    bookingRepository = bookingRepository
-                )
+            setContent {
+                GameArenaTheme {
+                    GameArenaApp(
+                        facilityRepository = facilityRepository,
+                        bookingRepository = bookingRepository
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Fallback UI in case of initialization failure
+            setContent {
+                GameArenaTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(24.dp)
+                            ) {
+                                Text(
+                                    text = "Failed to initialize app",
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Please restart the app",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -121,9 +156,19 @@ fun GameArenaApp(
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.Login.route,
             modifier = Modifier.padding(paddingValues)
         ) {
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Screen.Home.route) {
                 val viewModel: FacilitiesViewModel = viewModel(
                     factory = FacilitiesViewModelFactory(facilityRepository)

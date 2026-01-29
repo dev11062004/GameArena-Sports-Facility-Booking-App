@@ -11,9 +11,34 @@
 
 **A modern Android app for booking sports facilities with real-time availability checking**
 
-[Features](#-features) • [Screenshots](#-screenshots) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Architecture](#-architecture) • [Contributing](#-contributing)
+[Features](#-features) • [Screenshots](#-screenshots) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Architecture](#-architecture) • [Lab Docs](#-lab-documentation) • [Contributing](#-contributing)
 
 </div>
+
+---
+
+## 📚 Lab Documentation
+
+### UI Components Lab (Latest) ⭐
+Complete documentation for UI Components and Layout Design lab:
+
+- **[UI_LAB_SUBMISSION.md](UI_LAB_SUBMISSION.md)** - Complete submission package with all requirements
+- **[UI_COMPONENTS_LAB.md](UI_COMPONENTS_LAB.md)** - Detailed lab documentation (800+ lines)
+- **[UI_SCREENSHOTS_GUIDE.md](UI_SCREENSHOTS_GUIDE.md)** - Visual guide with ASCII diagrams (600+ lines)
+
+**Deliverables**:
+- ✅ 6 fully functional UI screens (Login, Sign-Up, Home, Detail, History, Profile)
+- ✅ 7 reusable components (GameArenaTextField, GameArenaButton, etc.)
+- ✅ Complete Material Design 3 implementation
+- ✅ Comprehensive documentation (2,500+ lines)
+
+### Wireframes Lab
+Wireframe and UI flow documentation:
+
+- **[WIREFRAMES_README.md](WIREFRAMES_README.md)** - Complete wireframes guide
+- **[WIREFRAMES_DOCUMENTATION.md](WIREFRAMES_DOCUMENTATION.md)** - ASCII art wireframes
+- **[UI_FLOW_DIAGRAMS.md](UI_FLOW_DIAGRAMS.md)** - Navigation flow diagrams
+- **[INTERACTIVE_WIREFRAMES.html](INTERACTIVE_WIREFRAMES.html)** - Interactive wireframes demo
 
 ---
 
@@ -29,6 +54,12 @@ GameArena is a comprehensive sports facility booking application that eliminates
 ---
 
 ## ✨ Features
+
+### 🔐 Authentication
+- Clean login screen with email/password
+- Comprehensive sign-up with validation
+- Password visibility toggle
+- Real-time form validation
 
 ### 🏠 Facility Browsing
 - Browse all available sports facilities with detailed information
@@ -48,6 +79,12 @@ GameArena is a comprehensive sports facility booking application that eliminates
 - View complete booking history
 - Track booking status (Confirmed/Cancelled/Completed)
 - Cancel upcoming bookings with one tap
+
+### 👤 User Profile
+- View profile information
+- Manage account settings
+- Access help and support
+- Secure logout
 - See detailed booking information (date, time, price)
 
 ### 🎨 Modern UI/UX
