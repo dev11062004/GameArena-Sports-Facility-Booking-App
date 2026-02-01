@@ -165,6 +165,22 @@ fun GameArenaApp(
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
+                    },
+                    onSignUpClick = {
+                        navController.navigate(Screen.Registration.route)
+                    }
+                )
+            }
+
+            composable(Screen.Registration.route) {
+                com.example.helloworldapk.ui.screens.RegistrationScreen(
+                    onRegistrationSuccess = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    },
+                    onBackClick = {
+                        navController.popBackStack()
                     }
                 )
             }

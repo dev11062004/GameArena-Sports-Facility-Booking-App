@@ -23,7 +23,8 @@ import com.example.helloworldapk.ui.components.GameArenaTextField
 
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onSignUpClick: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -131,7 +132,7 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
-                    // Navigate to Sign Up (Placeholder for now)
+                    onSignUpClick()
                 }
             )
         }

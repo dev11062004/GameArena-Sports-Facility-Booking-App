@@ -151,10 +151,36 @@ fun BookingCard(
                 )
             }
 
+
             if (canCancel) {
+                var showDialog by remember { mutableStateOf(false) }
+
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text("Cancel Booking") },
+                        text = { Text("Are you sure you want to cancel this booking?") },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    showDialog = false
+                                    onCancelBooking(booking.id)
+                                }
+                            ) {
+                                Text("Yes")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDialog = false }) {
+                                Text("No")
+                            }
+                        }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedButton(
-                    onClick = { onCancelBooking(booking.id) },
+                    onClick = { showDialog = true },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colorScheme.error

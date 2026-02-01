@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
         fun createRoute(bookingId: Long) = "booking_confirmation/$bookingId"
     }
     object BookingHistory : Screen("booking_history")
+    object Registration : Screen("registration")
 }

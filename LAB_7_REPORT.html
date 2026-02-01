@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7: UI Components & User Controls</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .student-info {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .screenshot-item {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .screenshot-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="student-info">
+        <h1>Lab 7: Implementation of UI Components & User Controls</h1>
+        <p><strong>Student Name:</strong> [Your Name Here]</p>
+        <p><strong>Student ID:</strong> [Your ID Here]</p>
+    </div>
+
+    <div class="section">
+        <h2>1. Introduction</h2>
+        <p>In this lab, we implemented essential UI components to enhance the user experience of the Sports Facility
+            Booking App. The application now includes functional forms for user registration, interactive lists for
+            facilities and bookings, navigation between screens, and feedback mechanisms like confirmation dialogs.</p>
+    </div>
+
+    <div class="section">
+        <h2>2. Implementation Details</h2>
+
+        <h3>A. Forms (Registration Screen)</h3>
+        <p>We created a <code>RegistrationScreen</code> that includes:</p>
+        <ul>
+            <li><strong>Text Fields:</strong> Full Name, Email, Password, Confirm Password.</li>
+            <li><strong>Radio Buttons:</strong> Gender selection (Male/Female/Other).</li>
+            <li><strong>Checkbox:</strong> Terms & Conditions acceptance.</li>
+            <li><strong>Validation:</strong> Ensures all fields are filled, passwords match, and terms are accepted.
+            </li>
+        </ul>
+
+        <pre><code>// RegistrationScreen.kt (Partial)
+Column(modifier = Modifier.padding(24.dp).verticalScroll(scrollState)) {
+    // Text Fields
+    GameArenaTextField(value = fullName, onValueChange = { fullName = it }, label = "Full Name")
+    GameArenaTextField(value = email, onValueChange = { email = it }, label = "Email Address")
+    
+    // Gender Radio Buttons
+    Row {
+        radioOptions.forEach { text ->
+            Row(Modifier.selectable(selected = (text == selectedGender), onClick = { selectedGender = text })) {
+                RadioButton(selected = (text == selectedGender), onClick = null)
+                Text(text = text)
+            }
+        }
+    }
+
+    // Terms Checkbox
+    Row {
+        Checkbox(checked = termsAccepted, onCheckedChange = { termsAccepted = it })
+        Text("I agree to the Terms & Conditions")
+    }
+
+    // Sign Up Button with Validation
+    GameArenaButton(text = "Sign Up", onClick = {
+        if (fullName.isNotBlank() && termsAccepted) {
+            onRegistrationSuccess()
+        } else {
+            errorMessage = "Please complete the form"
+        }
+    })
+}</code></pre>
+
+        <h3>B. List & Card Views (Dashboard & History)</h3>
+        <p>We used <code>LazyColumn</code> for displaying lists of facilities and bookings efficiently. Each item is
+            rendered using a <code>Card</code> composable.</p>
+
+        <pre><code>// HomeScreen.kt (Partial)
+LazyColumn(contentPadding = PaddingValues(16.dp)) {
+    items(uiState.facilities) { facility ->
+        FacilityCard(facility = facility, onClick = { onFacilityClick(facility.id) })
+    }
+}
+
+// FacilityCard Component
+Card(elevation = CardDefaults.cardElevation(2.dp)) {
+    Row(modifier = Modifier.padding(16.dp)) {
+        Icon(imageVector = getIconForType(facility.type), contentDescription = null)
+        Column {
+            Text(text = facility.name, style = MaterialTheme.typography.titleMedium)
+            Text(text = "$${facility.hourlyRate}/hour", color = MaterialTheme.colorScheme.primary)
+        }
+    }
+}</code></pre>
+
+        <h3>C. Navigation UI</h3>
+        <p>The app uses Jetpack Compose Navigation with a Bottom Navigation Bar for the main screens (Home, History) and
+            standard navigation for Auth screens.</p>
+
+        <pre><code>// MainActivity.kt (Partial)
+NavHost(navController = navController, startDestination = Screen.Login.route) {
+    composable(Screen.Login.route) { 
+        LoginScreen(
+            onLoginSuccess = { navController.navigate(Screen.Home.route) },
+            onSignUpClick = { navController.navigate(Screen.Registration.route) } // Navigate to Registration
+        )
+    }
+    composable(Screen.Registration.route) {
+        RegistrationScreen(
+            onRegistrationSuccess = { navController.navigate(Screen.Home.route) },
+            onBackClick = { navController.popBackStack() }
+        )
+    }
+    // ... Home and other routes
+}</code></pre>
+
+        <h3>D. Feedback Mechanisms (Dialogs)</h3>
+        <p>We implemented an <code>AlertDialog</code> to confirm booking cancellations, preventing accidental actions.
+        </p>
+
+        <pre><code>// BookingHistoryScreen.kt (Partial)
+if (showDialog) {
+    AlertDialog(
+        onDismissRequest = { showDialog = false },
+        title = { Text("Cancel Booking") },
+        text = { Text("Are you sure you want to cancel this booking?") },
+        confirmButton = {
+            TextButton(onClick = { 
+                showDialog = false
+                onCancelBooking(booking.id) 
+            }) { Text("Yes") }
+        },
+        dismissButton = {
+            TextButton(onClick = { showDialog = false }) { Text("No") }
+        }
+    )
+}</code></pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Screenshots</h2>
+
+        <div class="screenshot-grid">
+            <div class="screenshot-item">
+                <div class="screenshot-placeholder">Login Screen Image</div>
+                <p><em>Login Form</em></p>
+            </div>
+            <div class="screenshot-item">
+                <div class="screenshot-placeholder">Registration Screen Image</div>
+                <p><em>Form with Radio & Checkbox</em></p>
+            </div>
+            <div class="screenshot-item">
+                <div class="screenshot-placeholder">Dashboard Image</div>
+                <p><em>Facility List with Cards</em></p>
+            </div>
+            <div class="screenshot-item">
+                <div class="screenshot-placeholder">Dialog Image</div>
+                <p><em>Cancellation Alert Dialog</em></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Conclusion</h2>
+        <p>The implementation of standard UI components and controls has significantly improved the app's structure and
+            usability. The registration flow allows for user onboarding, the dashboard presents data clearly using
+            cards, and the feedback dialogs ensure safe user interactions. The app is now ready for further API
+            integration.</p>
+    </div>
+
+</body>
+
+</html>
