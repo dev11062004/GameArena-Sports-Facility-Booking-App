@@ -97,9 +97,22 @@ fun GameArenaApp(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    // Shared AuthViewModel for the entire app
+    val authViewModel: AuthViewModel = viewModel()
+    val authState by authViewModel.authState.collectAsState()
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+
+    // Check login state on app start
+    val isLoggedIn by userPreferences.isLoggedIn.collectAsState(initial = false)
+
+    // Determine start destination based on login state
+    val startDestination = if (isLoggedIn) Screen.Home.route else Screen.Login.route
+
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
-        Screen.BookingHistory.route
+        Screen.BookingHistory.route,
+        Screen.Profile.route
     )
 
     Scaffold(
@@ -112,6 +125,7 @@ fun GameArenaApp(
                             text = when (currentRoute) {
                                 Screen.Home.route -> "GameArena"
                                 Screen.BookingHistory.route -> "My Bookings"
+                                Screen.Profile.route -> "Profile"
                                 else -> "GameArena"
                             }
                         )
@@ -156,7 +170,7 @@ fun GameArenaApp(
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Login.route,
+            startDestination = startDestination,
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Login.route) {
@@ -168,7 +182,8 @@ fun GameArenaApp(
                     },
                     onSignUpClick = {
                         navController.navigate(Screen.Registration.route)
-                    }
+                    },
+                    authViewModel = authViewModel
                 )
             }
 
@@ -181,7 +196,8 @@ fun GameArenaApp(
                     },
                     onBackClick = {
                         navController.popBackStack()
-                    }
+                    },
+                    authViewModel = authViewModel
                 )
             }
 
@@ -198,6 +214,16 @@ fun GameArenaApp(
                     },
                     onFilterChange = { type ->
                         viewModel.filterByType(type)
+                    },
+                    onLogoutClick = {
+                        // Handle logout
+                        authViewModel.logoutUser()
+                        kotlinx.coroutines.MainScope().launch {
+                            userPreferences.clearUserSession()
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
                     }
                 )
             }
@@ -211,7 +237,6 @@ fun GameArenaApp(
                     factory = BookingViewModelFactory(facilityRepository, bookingRepository)
                 )
                 val uiState by viewModel.uiState.collectAsState()
-                val context = androidx.compose.ui.platform.LocalContext.current
 
                 LaunchedEffect(facilityId) {
                     viewModel.loadFacility(facilityId)
@@ -230,7 +255,7 @@ fun GameArenaApp(
                     onDateSelect = { date -> viewModel.selectDate(date) },
                     onTimeSlotSelect = { slot -> viewModel.selectTimeSlot(slot) },
                     onBookingConfirm = {
-                        val userId = UserPreferences.getUserId(context)
+                        val userId = userPreferences.getUserId()
                         viewModel.createBooking(userId)
                     }
                 )
@@ -241,10 +266,9 @@ fun GameArenaApp(
                     factory = BookingHistoryViewModelFactory(bookingRepository, facilityRepository)
                 )
                 val uiState by viewModel.uiState.collectAsState()
-                val context = androidx.compose.ui.platform.LocalContext.current
 
                 LaunchedEffect(Unit) {
-                    val userId = UserPreferences.getUserId(context)
+                    val userId = userPreferences.getUserId()
                     viewModel.loadBookings(userId)
                 }
 

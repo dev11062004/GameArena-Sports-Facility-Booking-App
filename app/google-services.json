@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "555461859013",
+    "firebase_url": "https://gamearena-b66d4-default-rtdb.firebaseio.com",
+    "project_id": "gamearena-b66d4",
+    "storage_bucket": "gamearena-b66d4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555461859013:android:5f358ca90af0d053ec02ac",
+        "android_client_info": {
+          "package_name": "com.andriod.GameArena"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHKKV-kZkV6le8URam2MBHZqF_7wL4sPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

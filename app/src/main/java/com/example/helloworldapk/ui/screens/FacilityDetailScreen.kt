@@ -4,22 +4,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.helloworldapk.data.FacilityType
+import androidx.compose.ui.unit.sp
 import com.example.helloworldapk.data.TimeSlot
+import com.example.helloworldapk.ui.theme.NeonYellow
+import com.example.helloworldapk.ui.theme.SurfaceVariantDark
 import com.example.helloworldapk.ui.viewmodel.BookingUiState
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,222 +38,194 @@ fun FacilityDetailScreen(
 ) {
     val facility = uiState.facility
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(facility?.name ?: "Facility") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, "Back")
-                    }
-                }
-            )
+    if (facility == null) {
+        Box(modifier = Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = NeonYellow)
         }
-    ) { paddingValues ->
-        if (facility == null) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // Facility Info Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = when (facility.type) {
-                                    FacilityType.CRICKET_GROUND -> Icons.Default.SportsCricket
-                                    FacilityType.POOL_TABLE -> Icons.Default.Pool
-                                    FacilityType.PICKLEBALL_COURT -> Icons.Default.SportsTennis
-                                },
-                                contentDescription = null,
-                                modifier = Modifier.size(48.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(
-                                    text = facility.name,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "$${facility.hourlyRate}/hour",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = facility.description,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-
-                // Date Selector
-                DateSelector(
-                    selectedDate = uiState.selectedDate,
-                    onDateSelect = onDateSelect
-                )
-
-                // Time Slots
-                if (uiState.isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    Text(
-                        text = "Available Time Slots",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.timeSlots) { slot ->
-                            TimeSlotChip(
-                                timeSlot = slot,
-                                isSelected = uiState.selectedTimeSlot == slot,
-                                onClick = { if (slot.isAvailable) onTimeSlotSelect(slot) }
-                            )
-                        }
-                    }
-                }
-
-                // Book Button
-                if (uiState.selectedTimeSlot != null) {
-                    Button(
-                        onClick = onBookingConfirm,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        enabled = !uiState.isLoading
-                    ) {
-                        val durationHours = (uiState.selectedTimeSlot.endTime - uiState.selectedTimeSlot.startTime) / (1000.0 * 60 * 60)
-                        val totalPrice = facility.hourlyRate * durationHours
-                        Text("Book Now - $${"%.2f".format(totalPrice)}")
-                    }
-                }
-
-                // Error Message
-                uiState.errorMessage?.let { error ->
-                    Text(
-                        text = error,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
+        return
     }
-}
 
-@Composable
-fun DateSelector(
-    selectedDate: Long,
-    onDateSelect: (Long) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val dateFormat = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
-    val calendar = Calendar.getInstance()
-
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(7) { index ->
-            calendar.timeInMillis = System.currentTimeMillis()
-            calendar.add(Calendar.DAY_OF_YEAR, index)
-            val date = calendar.timeInMillis
-
-            val isSelected = isSameDay(selectedDate, date)
-
-            OutlinedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onDateSelect(date) },
-                colors = CardDefaults.outlinedCardColors(
-                    containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Text(
-                    text = dateFormat.format(Date(date)),
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun TimeSlotChip(
-    timeSlot: TimeSlot,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    val startTime = timeFormat.format(Date(timeSlot.startTime))
-
-    OutlinedCard(
-        modifier = modifier.clickable(enabled = timeSlot.isAvailable, onClick = onClick),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = when {
-                !timeSlot.isAvailable -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                isSelected -> MaterialTheme.colorScheme.primaryContainer
-                else -> MaterialTheme.colorScheme.surface
-            }
-        )
-    ) {
+    Box(modifier = modifier.fillMaxSize().background(Color.Black)) {
+        // Hero Image Placeholder (Top Half)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            contentAlignment = Alignment.Center
+                .height(350.dp)
+                .background(SurfaceVariantDark)
+        ) {
+            // Back Button
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.padding(top = 40.dp, start = 16.dp)
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+            }
+            
+            // Like/Heart Button
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 40.dp, end = 16.dp)
+            ) {
+                Icon(Icons.Default.Favorite, contentDescription = "Like", tint = NeonYellow)
+            }
+            
+            // Title over image
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 24.dp, bottom = 60.dp) // Padding to be above the overlapping card
+            ) {
+                Text(
+                    text = facility.name,
+                    style = MaterialTheme.typography.displayMedium,
+                    color = Color.White
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.LocationOn, null, tint = Color.White, modifier = Modifier.size(16.dp))
+                    Text(
+                        text = "Sokak 748, 38", // Mock address
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+
+        // Draggable/Overlapping Sheet (Simulated with absolute offset/layout for now or standard scroll)
+        // Design shows a white/light card starting from bottom 1/3 of screen
+        // We'll use a Column with a spacer to push content down, but background logic needs care.
+        // Easiest is to just have a Column that scrolls, with the top part being transparent.
+        
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 320.dp) // Overlap amount
+        ) {
+            Card(
+                modifier = Modifier.fillMaxSize(),
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White) // White card as per design (or light grey)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    // Rating Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Badge
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "New\nBasketball\nSchool",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                fontSize = 8.sp,
+                                lineHeight = 10.sp
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.width(16.dp))
+                        
+                        Column {
+                            Row {
+                                repeat(4) { Icon(Icons.Rounded.Star, null, tint = NeonYellow, modifier = Modifier.size(20.dp)) }
+                                Icon(Icons.Rounded.Star, null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                            }
+                            Text(
+                                text = "563 reviews",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.weight(1f))
+                        
+                        Row {
+                            Icon(Icons.Default.Phone, null, tint = Color.Gray)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Icon(Icons.Default.Language, null, tint = Color.Gray)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Icon(Icons.Default.Share, null, tint = Color.Gray)
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // About Header
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "About",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        
+                        Surface(
+                            color = NeonYellow,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                             Text(
+                                text = "Our equipment",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.Black,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text(
+                        text = "${facility.description}\n\nA basketball school is a specialized educational institution that focuses on developing and enhancing the skills...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                    
+                    Spacer(modifier = Modifier.height(100.dp)) // Space for the bottom button
+                }
+            }
+        }
+        
+         // Sticky Bottom Button "Schedule"
+         Button(
+            onClick = { /* Open Schedule Logic - keeping existing flow or simulating */ 
+                // In real app this might expand the schedule sheet
+                onBookingConfirm() 
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = NeonYellow,
+                contentColor = Color.Black
+            ),
+            shape = MaterialTheme.shapes.extraLarge,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(24.dp)
+                .height(56.dp)
         ) {
             Text(
-                text = startTime,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                text = "Schedule",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
             )
         }
     }
-}
-
-fun isSameDay(date1: Long, date2: Long): Boolean {
-    val cal1 = Calendar.getInstance().apply { timeInMillis = date1 }
-    val cal2 = Calendar.getInstance().apply { timeInMillis = date2 }
-    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
 }
