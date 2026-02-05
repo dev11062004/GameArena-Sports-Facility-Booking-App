@@ -12,4 +12,11 @@ sealed class Screen(val route: String) {
         fun createRoute(bookingId: Long) = "booking_confirmation/$bookingId"
     }
     object BookingHistory : Screen("booking_history")
+
+    // Firebase CRUD Screens
+    object BookingList : Screen("booking_list")
+    object AddBooking : Screen("add_booking")
+    object EditBooking : Screen("edit_booking/{bookingData}") {
+        fun createRoute(bookingData: String) = "edit_booking/$bookingData"
+    }
 }

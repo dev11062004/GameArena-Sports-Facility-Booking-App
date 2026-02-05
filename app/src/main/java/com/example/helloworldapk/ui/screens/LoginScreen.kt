@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.helloworldapk.ui.components.GameArenaButton
 import com.example.helloworldapk.ui.components.GameArenaTextField
@@ -179,3 +180,15 @@ fun LoginScreen(
         }
     }
 }
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginScreenPreview() {
+    MaterialTheme {
+        LoginScreen(
+            onLoginSuccess = {},
+            onSignUpClick = {}
+        )
+    }
+}
+

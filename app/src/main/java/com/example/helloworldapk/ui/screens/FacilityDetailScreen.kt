@@ -68,7 +68,7 @@ fun FacilityDetailScreen(
                     .align(Alignment.TopEnd)
                     .padding(top = 40.dp, end = 16.dp)
             ) {
-                Icon(Icons.Default.Favorite, contentDescription = "Like", tint = NeonYellow)
+                Icon(Icons.Default.FavoriteBorder, contentDescription = "Like", tint = NeonYellow)
             }
             
             // Title over image
@@ -80,24 +80,22 @@ fun FacilityDetailScreen(
                 Text(
                     text = facility.name,
                     style = MaterialTheme.typography.displayMedium,
-                    color = Color.White
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, null, tint = Color.White, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.LocationOn, null, tint = NeonYellow, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Sokak 748, 38", // Mock address
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White
+                        text = "Sports Complex, Arena Central", // Generic or add location to Facility model
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White.copy(alpha = 0.9f)
                     )
                 }
             }
         }
 
-        // Draggable/Overlapping Sheet (Simulated with absolute offset/layout for now or standard scroll)
-        // Design shows a white/light card starting from bottom 1/3 of screen
-        // We'll use a Column with a spacer to push content down, but background logic needs care.
-        // Easiest is to just have a Column that scrolls, with the top part being transparent.
-        
+        // Draggable/Overlapping Sheet
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -106,7 +104,7 @@ fun FacilityDetailScreen(
             Card(
                 modifier = Modifier.fillMaxSize(),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White) // White card as per design (or light grey)
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)) // Dark theme card
             ) {
                 Column(
                     modifier = Modifier
@@ -114,38 +112,35 @@ fun FacilityDetailScreen(
                         .padding(24.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    // Rating Row
+                    // Rating Row - Made Generic
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Badge
-                        Box(
-                            modifier = Modifier
-                                .size(60.dp)
-                                .clip(CircleShape)
-                                .background(Color.Black),
-                            contentAlignment = Alignment.Center
+                        // Badge - Generic or based on Type
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = SurfaceVariantDark,
+                            modifier = Modifier.height(60.dp)
                         ) {
-                            Text(
-                                text = "New\nBasketball\nSchool",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color.White,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                fontSize = 8.sp,
-                                lineHeight = 10.sp
-                            )
+                             Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 16.dp)) {
+                                 Text(
+                                    text = "Premium\nFacility",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                )
+                             }
                         }
                         
                         Spacer(modifier = Modifier.width(16.dp))
                         
                         Column {
                             Row {
-                                repeat(4) { Icon(Icons.Rounded.Star, null, tint = NeonYellow, modifier = Modifier.size(20.dp)) }
-                                Icon(Icons.Rounded.Star, null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                                repeat(5) { Icon(Icons.Rounded.Star, null, tint = NeonYellow, modifier = Modifier.size(20.dp)) }
                             }
                             Text(
-                                text = "563 reviews",
+                                text = "Highly Rated",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -154,11 +149,8 @@ fun FacilityDetailScreen(
                         Spacer(modifier = Modifier.weight(1f))
                         
                         Row {
-                            Icon(Icons.Default.Phone, null, tint = Color.Gray)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Icon(Icons.Default.Language, null, tint = Color.Gray)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Icon(Icons.Default.Share, null, tint = Color.Gray)
+                            IconButton(onClick = { }) { Icon(Icons.Default.Phone, null, tint = Color.Gray) }
+                            IconButton(onClick = { }) { Icon(Icons.Default.Share, null, tint = Color.Gray) }
                         }
                     }
                     
@@ -174,18 +166,19 @@ fun FacilityDetailScreen(
                             text = "About",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = Color.White
                         )
                         
                         Surface(
-                            color = NeonYellow,
-                            shape = RoundedCornerShape(8.dp)
+                            color = NeonYellow.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(8.dp),
+                            border = androidx.compose.foundation.border(1.dp, NeonYellow, RoundedCornerShape(8.dp))
                         ) {
                              Text(
-                                text = "Our equipment",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = Color.Black,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                text = "${facility.hourlyRate}$ / hour",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = NeonYellow,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -194,36 +187,53 @@ fun FacilityDetailScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = "${facility.description}\n\nA basketball school is a specialized educational institution that focuses on developing and enhancing the skills...",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
+                        text = facility.description,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.LightGray,
+                        lineHeight = 24.sp
                     )
                     
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Text(
+                        text = "Amenities",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SuggestionChip(onClick = {}, label = { Text("Parking") }, colors = SuggestionChipDefaults.suggestionChipColors(labelColor = Color.White))
+                        SuggestionChip(onClick = {}, label = { Text("Showers") }, colors = SuggestionChipDefaults.suggestionChipColors(labelColor = Color.White))
+                        SuggestionChip(onClick = {}, label = { Text("Equipment") }, colors = SuggestionChipDefaults.suggestionChipColors(labelColor = Color.White))
+                    }
+
+
                     Spacer(modifier = Modifier.height(100.dp)) // Space for the bottom button
                 }
             }
         }
         
-         // Sticky Bottom Button "Schedule"
+         // Sticky Bottom Button "Book Now"
          Button(
-            onClick = { /* Open Schedule Logic - keeping existing flow or simulating */ 
-                // In real app this might expand the schedule sheet
+            onClick = { 
                 onBookingConfirm() 
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = NeonYellow,
                 contentColor = Color.Black
             ),
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = MaterialTheme.shapes.large,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(24.dp)
                 .height(56.dp)
+                .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.large)
         ) {
             Text(
-                text = "Schedule",
-                style = MaterialTheme.typography.labelLarge,
+                text = "Book Now",
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
         }

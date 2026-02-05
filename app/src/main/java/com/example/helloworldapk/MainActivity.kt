@@ -29,6 +29,11 @@ import com.example.helloworldapk.ui.screens.BookingHistoryScreen
 import com.example.helloworldapk.ui.screens.FacilityDetailScreen
 import com.example.helloworldapk.ui.screens.HomeScreen
 import com.example.helloworldapk.ui.screens.LoginScreen
+import com.example.helloworldapk.ui.screens.BookingListScreen
+import com.example.helloworldapk.ui.screens.AddBookingScreen
+import com.example.helloworldapk.ui.screens.EditBookingScreen
+import com.example.helloworldapk.data.FirebaseBooking
+import com.google.gson.Gson
 import com.example.helloworldapk.ui.theme.GameArenaTheme
 import com.example.helloworldapk.ui.viewmodel.*
 import com.example.helloworldapk.utils.UserPreferences
@@ -112,7 +117,8 @@ fun GameArenaApp(
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
         Screen.BookingHistory.route,
-        Screen.Profile.route
+        Screen.Profile.route,
+        Screen.BookingList.route
     )
 
     Scaffold(
@@ -126,6 +132,7 @@ fun GameArenaApp(
                                 Screen.Home.route -> "GameArena"
                                 Screen.BookingHistory.route -> "My Bookings"
                                 Screen.Profile.route -> "Profile"
+                                Screen.BookingList.route -> "Firebase Bookings"
                                 else -> "GameArena"
                             }
                         )
@@ -224,6 +231,9 @@ fun GameArenaApp(
                                 popUpTo(0) { inclusive = true }
                             }
                         }
+                    },
+                    onNavigateToBookingList = {
+                        navController.navigate(Screen.BookingList.route)
                     }
                 )
             }
@@ -277,6 +287,58 @@ fun GameArenaApp(
                     onCancelBooking = { bookingId ->
                         viewModel.cancelBooking(bookingId)
                     }
+                )
+            }
+
+            // Firebase CRUD Booking Routes
+            composable(Screen.BookingList.route) {
+                val viewModel: FirebaseBookingViewModel = viewModel()
+                val userId = userPreferences.getUserId()
+
+                BookingListScreen(
+                    userId = userId,
+                    onNavigateToAddBooking = {
+                        navController.navigate(Screen.AddBooking.route)
+                    },
+                    onNavigateToEditBooking = { booking ->
+                        val gson = Gson()
+                        val bookingJson = gson.toJson(booking)
+                        val encodedJson = java.net.URLEncoder.encode(bookingJson, "UTF-8")
+                        navController.navigate(Screen.EditBooking.createRoute(encodedJson))
+                    },
+                    viewModel = viewModel
+                )
+            }
+
+            composable(Screen.AddBooking.route) {
+                val viewModel: FirebaseBookingViewModel = viewModel()
+                val userId = userPreferences.getUserId()
+
+                AddBookingScreen(
+                    userId = userId,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    viewModel = viewModel
+                )
+            }
+
+            composable(
+                route = Screen.EditBooking.route,
+                arguments = listOf(navArgument("bookingData") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val bookingData = backStackEntry.arguments?.getString("bookingData") ?: return@composable
+                val decodedJson = java.net.URLDecoder.decode(bookingData, "UTF-8")
+                val gson = Gson()
+                val booking = gson.fromJson(decodedJson, FirebaseBooking::class.java)
+                val viewModel: FirebaseBookingViewModel = viewModel()
+
+                EditBookingScreen(
+                    booking = booking,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    viewModel = viewModel
                 )
             }
         }

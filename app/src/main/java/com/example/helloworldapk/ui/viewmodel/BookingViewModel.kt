@@ -67,6 +67,8 @@ class BookingViewModel(
         }
     }
 
+    private val firebaseRepository = com.example.helloworldapk.data.repository.FirebaseBookingRepository()
+
     fun createBooking(userId: String) {
         val facility = _uiState.value.facility ?: return
         val timeSlot = _uiState.value.selectedTimeSlot ?: return
@@ -77,6 +79,7 @@ class BookingViewModel(
             val durationHours = (timeSlot.endTime - timeSlot.startTime) / (1000.0 * 60 * 60)
             val totalPrice = facility.hourlyRate * durationHours
 
+            // 1. Create Local Booking (Room)
             val booking = Booking(
                 facilityId = facility.id,
                 userId = userId,
@@ -87,6 +90,30 @@ class BookingViewModel(
             )
 
             val result = bookingRepository.createBooking(booking)
+
+            // 2. Create Firebase Booking (Cloud)
+            if (result.isSuccess) {
+                try {
+                    val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                    val timeFormat = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+                    val dateStr = dateFormat.format(java.util.Date(timeSlot.startTime))
+                    val startStr = timeFormat.format(java.util.Date(timeSlot.startTime))
+                    val endStr = timeFormat.format(java.util.Date(timeSlot.endTime))
+
+                    val firebaseBooking = com.example.helloworldapk.data.FirebaseBooking(
+                        userId = userId,
+                        facilityName = facility.name,
+                        location = "Sports Complex", // Default location
+                        date = dateStr,
+                        timeSlot = "$startStr - $endStr",
+                        price = totalPrice.toInt(),
+                        status = true
+                    )
+                    firebaseRepository.createBooking(firebaseBooking)
+                } catch (e: Exception) {
+                    e.printStackTrace() // Log but don't fail the UI flow if Room succeeded
+                }
+            }
 
             _uiState.value = if (result.isSuccess) {
                 _uiState.value.copy(

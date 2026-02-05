@@ -37,6 +37,7 @@ fun HomeScreen(
     onFacilityClick: (Long) -> Unit,
     onFilterChange: (FacilityType?) -> Unit,
     onLogoutClick: () -> Unit = {},
+    onNavigateToBookingList: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -79,18 +80,29 @@ fun HomeScreen(
         ) {
             Column {
                 Text(
-                    text = "Hello, Mary", // Hardcoded name as per design, normally dynamic
+                    text = "Welcome Back",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // Firebase Bookings IconButton
+                IconButton(onClick = onNavigateToBookingList) {
+                    Icon(
+                        imageVector = Icons.Default.Cloud,
+                        contentDescription = "My Bookings",
+                        tint = NeonYellow,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
                 // Logout IconButton
                 IconButton(onClick = { showLogoutDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.ExitToApp,
                         contentDescription = "Logout",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
@@ -99,14 +111,17 @@ fun HomeScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
-                )
+                        .background(SurfaceVariantDark),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.Person, contentDescription = null, tint = Color.Gray)
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // "Your booking today" Card
+        // "Ready to Play" Banner (Replaces confusing "Your booking today" hardcoded card)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,40 +130,44 @@ fun HomeScreen(
             colors = CardDefaults.cardColors(containerColor = Color.Black)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                // Background Image Placeholder
+                // Background
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(SurfaceVariantDark)
+                        .background(
+                            androidx.compose.ui.graphics.Brush.horizontalGradient(
+                                colors = listOf(Color(0xFF2C2C2C), Color(0xFF1E1E1E))
+                            )
+                        )
                 )
                 
                 Column(
                     modifier = Modifier
                         .padding(24.dp)
-                        .align(Alignment.BottomStart)
+                        .align(Alignment.CenterStart)
                 ) {
                     Text(
-                        text = "Your booking today",
+                        text = "Find Your Game",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = "BASKET&FLEX",
-                        style = MaterialTheme.typography.displayMedium,
-                        fontSize = 24.sp,
-                        color = Color.White
+                        color = NeonYellow
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "24 Feb, 15:00",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White
+                        text = "BOOK & PLAY",
+                        style = MaterialTheme.typography.displayMedium,
+                        fontSize = 28.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = "Leskova street, 38",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.7f)
-                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { /* Scroll to list or no-op */ },
+                        colors = ButtonDefaults.buttonColors(containerColor = NeonYellow, contentColor = Color.Black),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text("Explore Now", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }

@@ -61,8 +61,14 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
 
+    // Kotlin Coroutines Play Services for Firebase await()
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
     // DataStore for session management
     implementation(libs.androidx.datastore.preferences)
+
+    // Gson for JSON serialization
+    implementation("com.google.code.gson:gson:2.10.1")
 
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
