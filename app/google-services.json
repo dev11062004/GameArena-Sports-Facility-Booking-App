@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:555461859013:android:5f358ca90af0d053ec02ac",
         "android_client_info": {
-          "package_name": "com.andriod.GameArena"
+          "package_name": "com.example.gamearena"
         }
       },
       "oauth_client": [],

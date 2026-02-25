@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="GameArena">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-02-04T18:47:31.788512100Z">
+        <DropdownSelection timestamp="2026-02-17T17:01:14.937987Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=d4ce6e61" />

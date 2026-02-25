@@ -1,0 +1,108 @@
+\documentclass[a4paper,9pt]{article}
+
+% -------------------- Packages --------------------
+\usepackage[margin=0.5in]{geometry}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+\usepackage{tabularx}
+\usepackage{fontspec}
+
+% -------------------- Font Settings --------------------
+% Note: This requires XeLaTeX or LuaLaTeX to compile.
+% TeX Gyre Heros is a Helvetica clone available on Overleaf.
+\setmainfont{TeX Gyre Heros} 
+
+% -------------------- Sections Formatting --------------------
+\pagestyle{empty}
+
+\titleformat{\section}
+  {\large\bfseries}
+  {}
+  {0em}
+  {}
+  [\titlerule]
+
+\titlespacing{\section}{0pt}{6pt}{4pt}
+
+\setlist[itemize]{topsep=2pt, itemsep=2pt, leftmargin=1.5em}
+
+\hypersetup{
+  colorlinks=true,
+  urlcolor=blue,
+  linkcolor=blue,
+  citecolor=blue
+}
+
+% -------------------- Document Start --------------------
+\begin{document}
+
+% -------------------- Header --------------------
+\begin{center}
+    {\LARGE \textbf{Dev Dadhania}} \\[4pt]
+    Aspiring Data Analyst \;|\; SQL \;|\; Pre-Final Year Student \;|\; Advanced Excel \;|\; Power BI \\[4pt]
+    \faEnvelope\ \href{mailto:dev886621@gmail.com}{dev886621@gmail.com}
+    \quad
+    \faPhone\ +91 7990261094
+    \quad
+    \faGithub\ \href{https://github.com/dev11062004}{github.com/dev11062004}
+    \quad
+    \faLinkedin\ \href{https://www.linkedin.com/in/dev-dadhania-744b49284/}{linkedin.com/in/dev-dadhania-744b49284}
+\end{center}
+
+% -------------------- Experience --------------------
+\section{Experience}
+\textbf{Python Programming Intern} — CodSoft (Remote) \hfill \textit{May 2025 – June 2025}
+\begin{itemize}
+    \item Completed an internship focusing on core Python programming and problem-solving.
+    \item Refined automation scripts and implemented file handling and data processing tasks.
+    \item Worked with Python libraries such as NumPy, Pandas, and Matplotlib for data analysis and visualization.
+    \item Improved modular coding, debugging, and performance optimization practices.
+\end{itemize}
+
+% -------------------- Projects --------------------
+\section{Projects}
+
+\textbf{Zero Emission EV Sales Analysis} \hfill \textit{Python | SQL | Power BI}
+\begin{itemize}
+    \item Cleaned and transformed multi-year EV sales data (2014–2024) across Year, Month, State, and Vehicle Category using Pandas and NumPy.
+    \item Executed SQL-based aggregations for state-wise, monthly, quarterly, and category-wise sales analysis.
+    \item Built an optimized star-schema data model in Power BI, improving report performance and scalability.
+    \item Developed 10+ DAX measures including Total Sales (4M units), YoY Growth, MoM Change, and Category Share.
+    \item Designed an interactive dashboard with slicers enabling real-time drill-down analysis.
+    \item Implemented geospatial analysis to identify top-performing EV states such as Maharashtra, Karnataka, Uttar Pradesh, and Rajasthan.
+\end{itemize}
+
+\textbf{Blinkit Sales Performance Analytics} \hfill \textit{Power BI | DAX | Data Modeling}
+\begin{itemize}
+    \item Built an executive-ready Power BI dashboard analyzing \$1.20M+ in grocery sales across outlets, locations, and categories.
+    \item Modeled sales data (8,523 items) and computed KPIs including Total Sales, Average Sales, and Customer Rating.
+    \item Engineered 7+ DAX measures identifying high-performing categories contributing \textasciitilde65\% of revenue.
+    \item Delivered insights showing medium-sized outlets contributed \textasciitilde42\% of total sales.
+\end{itemize}
+
+% -------------------- Education --------------------
+\section{Education}
+\textbf{CHARUSAT University} \hfill \textit{Graduating 2026} \\
+Bachelor of Technology in Information Technology — \textit{First Class}
+
+% -------------------- Skills --------------------
+\section{Skills}
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\textbf{Programming \& Data Analysis:} & Python, NumPy, Pandas, SQL \\
+\textbf{Machine Learning \& Analytics:} & Scikit-learn, Predictive Modeling, Feature Selection, Face Recognition \\
+\textbf{Data Visualization \& BI Tools:} & Power BI, Matplotlib, Seaborn \\
+\textbf{Database \& Data Handling:} & MySQL, CSV \\
+\end{tabularx}
+
+% -------------------- Certifications --------------------
+\section{Certifications}
+\begin{itemize}
+    \item IBM Data Analyst Professional Certificate — Coursera
+    \item IBM Data Science Professional Certificate — Coursera
+\end{itemize}
+
+\end{document}

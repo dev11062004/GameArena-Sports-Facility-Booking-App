@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.helloworldapk"
+    namespace = "com.example.gamearena"
     compileSdk = 36
 
     defaultConfig {

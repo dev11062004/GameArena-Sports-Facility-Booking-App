@@ -1,4 +1,4 @@
-package com.example.helloworldapk
+package com.example.gamearena
 
 import org.junit.Test
 
